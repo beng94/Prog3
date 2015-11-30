@@ -15,12 +15,13 @@ public class LifeCounter implements Serializable {
 		this.game = g;
 	}
 	
-	void decrease ()
+	public void decrease ()
 	{
 		lives--;
 		field.setText(new Integer(lives).toString());
 		if(lives <= 0)
 		{
+			game.stop();
 			game.lost();
 		}
 	}
@@ -31,6 +32,4 @@ public class LifeCounter implements Serializable {
 	{
 		field = f;
 	}
-	
-	//TODO: implement extra life Points
 }

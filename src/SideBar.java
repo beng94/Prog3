@@ -1,9 +1,11 @@
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serializable;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -78,7 +80,8 @@ public class SideBar extends JPanel implements Serializable {
 		txt_lives.setText((new Integer(life_cnt.get_lives())).toString());
 		txt_lives.setAlignmentX(Component.CENTER_ALIGNMENT);
 		txt_lives.setEditable(false);
-		txt_lives.setMaximumSize(new Dimension(50, 30));
+		txt_lives.setMaximumSize(new Dimension(70, 30));
+		txt_lives.setHorizontalAlignment(JTextField.CENTER);
 		this.add(txt_lives);
 		
 		life_cnt.add_field_listener(txt_lives);
@@ -87,12 +90,14 @@ public class SideBar extends JPanel implements Serializable {
 		txt_score.setText(new Integer(score.get_score()).toString());
 		txt_score.setAlignmentX(Component.CENTER_ALIGNMENT);
 		txt_score.setEditable(false);
-		txt_score.setMaximumSize(new Dimension(50, 30));
+		txt_score.setMaximumSize(new Dimension(70, 30));
+		txt_score.setHorizontalAlignment(JTextField.CENTER);
 		this.add(txt_score);
 		
 		score.add_field_listener(txt_score);
 		
 		this.setFocusable(false);
+		this.setBorder(BorderFactory.createMatteBorder(0,1,0,0, Color.BLACK));
 	}
 
 }

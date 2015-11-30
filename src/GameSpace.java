@@ -18,7 +18,7 @@ public class GameSpace extends JPanel implements Serializable {
 	private Score score;
 	private Player player;
 	private List<Point> points;
-	private boolean run = true;
+	private boolean run = false;
 	
 	GameSpace (int width, int height, LifeCounter l_cnt, Score sc)
 	{
@@ -76,6 +76,8 @@ public class GameSpace extends JPanel implements Serializable {
 	}
 	
 	public List<Point> get_points() { return points; }
+	
+	public void add_point(Point p) { points.add(p); }
 	
 	public void move_points ()
 	{	

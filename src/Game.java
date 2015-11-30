@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
 public class Game extends JFrame
 {
 	private final int HEIGHT = 500;
-	private final int WIDTH = 500;
+	private final int WIDTH = 370;
 	private final int GAME_WIDTH = 300;
 	private final int BAR_WIDTH = 200;
 	private GameSpace game_space;
@@ -22,8 +22,9 @@ public class Game extends JFrame
 	private Score score;
 	private SideBar side_bar;
 	
-	Game ()
+	Game (String name)
 	{
+		this.setTitle("Potyogó Bogyók");
 		this.life_cnt = new LifeCounter(5, this);
 		this.score = new Score();
 		this.game_space = new GameSpace(GAME_WIDTH, HEIGHT, life_cnt, score);
@@ -36,12 +37,13 @@ public class Game extends JFrame
 		this.addKeyListener(new ControlManager(game_space.get_player()));
 		
 		this.setSize(WIDTH, HEIGHT);
+		this.setResizable(false);
 		this.setVisible(true);
 		this.toFront();
 		this.setState(Frame.NORMAL);
 		this.requestFocus();
-	
-		//TODO: forbid resize
+		
+		start();
 	}
 	
 	public void start ()
@@ -62,11 +64,14 @@ public class Game extends JFrame
 	{
 		System.out.println("Save");
 		stop();
-		
+
 		try {
 			ObjectOutputStream out = new ObjectOutputStream(
 						new FileOutputStream("game.ser"));
-	        out.writeObject(this);
+	        out.writeObject(this.life_cnt);
+	        out.writeObject(this.score);
+	        out.writeObject(this.game_space);
+	        out.writeObject(this.side_bar);
 	        out.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -80,26 +85,30 @@ public class Game extends JFrame
 	{
 		System.out.println("Load");
 		stop();
-		
-		Game g = null;
+
+		LifeCounter lf = new LifeCounter(5, this);
+		Score sc = new Score();
+		GameSpace gs = new GameSpace(GAME_WIDTH, HEIGHT, lf, sc);
 		try {
 			ObjectInputStream in = new ObjectInputStream(
 					new FileInputStream("game.ser"));
-	        g = (Game) in.readObject();
+	        lf = (LifeCounter) in.readObject();
+	        sc = (Score) in.readObject();
+	        gs = (GameSpace) in.readObject();
 	        in.close();	        
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-        System.out.println(g.game_space.get_points().size());
-    	
-        getContentPane().removeAll();
-		this.life_cnt = g.life_cnt;
-		this.score = g.score;
-		this.game_space = g.game_space;
+		     
+    	this.getContentPane().removeAll();
+		this.life_cnt = new LifeCounter(lf.get_lives(), this);
+		this.score = sc;
+		this.game_space = new GameSpace(GAME_WIDTH, HEIGHT, life_cnt, score);
+		for(Point p: gs.get_points())
+			this.game_space.add_point(p);
 		this.add(game_space, BorderLayout.CENTER);
 		
-		this.side_bar = g.side_bar;
+		this.side_bar = new SideBar(BAR_WIDTH, HEIGHT, life_cnt, score, this);
 		this.add(side_bar, BorderLayout.EAST);
 		
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -109,17 +118,17 @@ public class Game extends JFrame
 		this.setVisible(true);
 		this.toFront();
 		this.setState(Frame.NORMAL);
-
-        start();
 		this.requestFocus();
+		
+		start();
 	}
 	
 	public void lost ()
 	{
-		System.out.println("You lose");
+		System.out.println("You lost");
 		stop();
 		
-	    int response = JOptionPane.showConfirmDialog(null, "Game Over!\nDo you want to start a new one", "Gane Over",
+	    int response = JOptionPane.showConfirmDialog(this, "Game Over!\nDo you want to start a new one?", "Game Over",
 	            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 	        if (response == JOptionPane.NO_OPTION) 
 	        {
@@ -127,7 +136,13 @@ public class Game extends JFrame
 	        } 
 	        else if (response == JOptionPane.YES_OPTION) 
 	        {
-	        	getContentPane().removeAll();
+	        	this.getContentPane().removeAll();
+	    		this.setSize(WIDTH, HEIGHT);
+	    		this.setVisible(true);
+	    		this.toFront();
+	    		this.setState(Frame.NORMAL);
+	    		this.requestFocus();
+
 	    		this.life_cnt = new LifeCounter(5, this);
 	    		this.score = new Score();
 	    		this.game_space = new GameSpace(GAME_WIDTH, HEIGHT, life_cnt, score);
@@ -155,6 +170,6 @@ public class Game extends JFrame
 	
 	public static void main (String[] args)
 	{
-		Game g = new Game();
+		Game g = new Game("start");
 	}
 }

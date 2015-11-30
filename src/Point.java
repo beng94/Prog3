@@ -41,7 +41,7 @@ public class Point implements Serializable
 	public int move ()
 	{
 		y += value;
-		((Ellipse2D) shape).setFrame(x, y + value, SHAPE_HEIGHT, SHAPE_HEIGHT);
+		((Ellipse2D) shape).setFrame(x, y, SHAPE_HEIGHT, SHAPE_HEIGHT);
 		
 		return y;
 	}
